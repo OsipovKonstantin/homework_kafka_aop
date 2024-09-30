@@ -28,7 +28,7 @@ public class ClientServiceImpl implements ClientService {
         repository.saveAll(clients)
                 .stream()
                 .map(Client::getId)
-                .forEach(kafkaClientProducer::send);
+                .forEach(id -> kafkaClientProducer.send(id));
     }
 
     @Override
