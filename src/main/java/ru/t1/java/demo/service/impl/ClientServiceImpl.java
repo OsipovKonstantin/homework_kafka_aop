@@ -3,7 +3,6 @@ package ru.t1.java.demo.service.impl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import ru.t1.java.demo.aop.Metric;
 import ru.t1.java.demo.kafka.KafkaClientProducer;

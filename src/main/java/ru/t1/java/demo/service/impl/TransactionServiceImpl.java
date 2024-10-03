@@ -53,7 +53,7 @@ public class TransactionServiceImpl implements TransactionService {
     public void addTransaction(List<Transaction> transactions) {
         List<Transaction> validatedTransactions = new ArrayList<>();
         List<Account> validatedAccounts = new ArrayList<>();
-        for(Transaction transaction: transactions) {
+        for (Transaction transaction : transactions) {
             Long clientId = transaction.getClientId();
             Long accountId = transaction.getAccountId();
             Client client = clientRepository.findById(clientId)

@@ -19,7 +19,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @Table(name = "account")
 public class Account extends AbstractPersistable<Long> {
-    @Column(name="client_id")
+    @Column(name = "client_id")
     private Long clientId;
 
     private AccountType type;
