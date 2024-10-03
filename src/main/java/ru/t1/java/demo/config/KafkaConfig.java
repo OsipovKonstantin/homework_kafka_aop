@@ -19,9 +19,8 @@ import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.support.serializer.JsonSerializer;
 import org.springframework.util.backoff.FixedBackOff;
-import ru.t1.java.demo.kafka.KafkaClientProducer;
-import ru.t1.java.demo.kafka.MessageDeserializer;
-import ru.t1.java.demo.model.dto.ClientDto;
+import ru.t1.java.demo.kafka.*;
+import ru.t1.java.demo.model.dto.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,7 +30,11 @@ import java.util.Map;
 public class KafkaConfig {
 
     @Value("${t1.kafka.consumer.group-id}")
-    private String groupId;
+    private String clientGroupId;
+    @Value("${t1.kafka.consumer.account-group-id}")
+    private String accountGroupId;
+    @Value("${t1.kafka.consumer.transaction-group-id}")
+    private String transactionGroupId;
     @Value("${t1.kafka.bootstrap.server}")
     private String servers;
     @Value("${t1.kafka.session.timeout.ms:15000}")
@@ -42,18 +45,14 @@ public class KafkaConfig {
     private String maxPollRecords;
     @Value("${t1.kafka.max.poll.interval.ms:3000}")
     private String maxPollIntervalsMs;
-    @Value("${t1.kafka.topic.client_id_registered}")
-    private String clientTopic;
 
-
-    @Bean
-    public ConsumerFactory<String, ClientDto> consumerListenerFactory() {
+    public <T> ConsumerFactory<String, T> consumerListenerFactory(String groupId, Class<T> clazz) {
         Map<String, Object> props = new HashMap<>();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, servers);
         props.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, MessageDeserializer.class);
-        props.put(JsonDeserializer.VALUE_DEFAULT_TYPE, "ru.t1.java.demo.model.dto.ClientDto");
+        props.put(JsonDeserializer.VALUE_DEFAULT_TYPE, "ru.t1.java.demo.model.dto." + clazz.getSimpleName());
         props.put(JsonDeserializer.TRUSTED_PACKAGES, "*");
         props.put(JsonDeserializer.USE_TYPE_INFO_HEADERS, false);
         props.put(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, sessionTimeout);
@@ -62,19 +61,18 @@ public class KafkaConfig {
         props.put(ConsumerConfig.MAX_POLL_INTERVAL_MS_CONFIG, maxPollIntervalsMs);
         props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, Boolean.FALSE);
         props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
-        props.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
         props.put(ErrorHandlingDeserializer.VALUE_DESERIALIZER_CLASS, MessageDeserializer.class.getName());
         props.put(ErrorHandlingDeserializer.KEY_DESERIALIZER_CLASS, MessageDeserializer.class);
 
-        DefaultKafkaConsumerFactory factory = new DefaultKafkaConsumerFactory<String, ClientDto>(props);
+        DefaultKafkaConsumerFactory<String, T> factory = new DefaultKafkaConsumerFactory<>(props);
         factory.setKeyDeserializer(new StringDeserializer());
 
         return factory;
     }
 
-    @Bean
-    ConcurrentKafkaListenerContainerFactory<String, ClientDto> kafkaListenerContainerFactory(@Qualifier("consumerListenerFactory") ConsumerFactory<String, ClientDto> consumerFactory) {
-        ConcurrentKafkaListenerContainerFactory<String, ClientDto> factory = new ConcurrentKafkaListenerContainerFactory<>();
+    <T> ConcurrentKafkaListenerContainerFactory<String, T> kafkaListenerContainerFactory(
+            @Qualifier("consumerListenerFactory") ConsumerFactory<String, T> consumerFactory) {
+        ConcurrentKafkaListenerContainerFactory<String, T> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factoryBuilder(consumerFactory, factory);
         return factory;
     }
@@ -98,22 +96,37 @@ public class KafkaConfig {
         return handler;
     }
 
-    @Bean("client")
-    public KafkaTemplate<String, ClientDto> kafkaTemplate(ProducerFactory<String, ClientDto> producerPatFactory) {
-        return new KafkaTemplate<>(producerPatFactory);
+    @Bean
+    ConcurrentKafkaListenerContainerFactory<String, ClientDto> clientListenerContainerFactory() {
+        return kafkaListenerContainerFactory(clientListenerFactory());
     }
 
     @Bean
-    @ConditionalOnProperty(value = "t1.kafka.producer.enable",
-            havingValue = "true",
-            matchIfMissing = true)
-    public KafkaClientProducer producerClient(@Qualifier("client") KafkaTemplate template) {
-        template.setDefaultTopic(clientTopic);
-        return new KafkaClientProducer(template);
+    public ConsumerFactory<String, ClientDto> clientListenerFactory() {
+        return consumerListenerFactory(clientGroupId, ClientDto.class);
     }
 
     @Bean
-    public ProducerFactory<String, ClientDto> producerClientFactory() {
+    ConcurrentKafkaListenerContainerFactory<String, AccountDto> accountListenerContainerFactory() {
+        return kafkaListenerContainerFactory(accountListenerFactory());
+    }
+
+    @Bean
+    public ConsumerFactory<String, AccountDto> accountListenerFactory() {
+        return consumerListenerFactory(accountGroupId, AccountDto.class);
+    }
+
+    @Bean
+    ConcurrentKafkaListenerContainerFactory<String, TransactionDto> transactionListenerContainerFactory() {
+        return kafkaListenerContainerFactory(transactionListenerFactory());
+    }
+
+    @Bean
+    public ConsumerFactory<String, TransactionDto> transactionListenerFactory() {
+        return consumerListenerFactory(transactionGroupId, TransactionDto.class);
+    }
+
+    public <T> ProducerFactory<String, T> producerFactory() {
         Map<String, Object> props = new HashMap<>();
         props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, servers);
         props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
@@ -122,4 +135,37 @@ public class KafkaConfig {
         return new DefaultKafkaProducerFactory<>(props);
     }
 
+    public <T> KafkaTemplate<String, T> kafkaTemplate() {
+        return new KafkaTemplate<>(producerFactory());
+    }
+
+    @Bean
+    public KafkaTemplate<String, AccountDto> kafkaAccountTemplate() {
+        return kafkaTemplate();
+    }
+
+    @Bean
+    public KafkaTemplate<String, ClientDto> kafkaClientTemplate() {
+        return kafkaTemplate();
+    }
+
+    @Bean
+    public KafkaTemplate<String, TransactionDto> kafkaTransactionTemplate() {
+        return kafkaTemplate();
+    }
+
+    @Bean
+    public KafkaTemplate<String, MetricDto> kafkaMetricTemplate() {
+        return kafkaTemplate();
+    }
+
+    @Bean
+    public KafkaTemplate<String, ErrorDto> kafkaErrorTemplate() {
+        return kafkaTemplate();
+    }
+
+    @Bean
+    public KafkaTemplate<String, Long> kafkaLongTemplate() {
+        return kafkaTemplate();
+    }
 }

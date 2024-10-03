@@ -6,34 +6,34 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
-import ru.t1.java.demo.model.dto.ClientDto;
+import ru.t1.java.demo.model.dto.AccountDto;
+import ru.t1.java.demo.model.dto.TransactionDto;
 
 import java.util.UUID;
 
 @Slf4j
-@RequiredArgsConstructor
 @Component
-public class KafkaClientProducer {
-
-    private final KafkaTemplate<String, ClientDto> clientDtoTemplate;
+@RequiredArgsConstructor
+public class KafkaTransactionProducer {
+    private final KafkaTemplate<String, TransactionDto> transactionDtoTemplate;
     private final KafkaTemplate<String, Long> longTemplate;
-    @Value("${t1.kafka.topic.client_id_registered}")
+    @Value("${t1.kafka.topic.transaction-registered}")
     private String topic;
 
     public void send(Long id) {
         try {
             longTemplate.setDefaultTopic(topic);
-            longTemplate.send(topic, UUID.randomUUID().toString(), id).get();
+            longTemplate.sendDefault(UUID.randomUUID().toString(), id).get();
             longTemplate.flush();
         } catch (Exception ex) {
             log.error(ex.getMessage(), ex);
         }
     }
 
-    public void sendTo(String topic, ClientDto clientDto) {
+    public void sendTo(String topic, TransactionDto transactionDto) {
         try {
-            clientDtoTemplate.send(topic, clientDto).get();
-            clientDtoTemplate.flush();
+            transactionDtoTemplate.send(topic, transactionDto).get();
+            transactionDtoTemplate.flush();
         } catch (Exception ex) {
             log.error(ex.getMessage(), ex);
         }
