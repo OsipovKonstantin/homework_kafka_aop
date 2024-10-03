@@ -19,7 +19,9 @@ import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.support.serializer.JsonSerializer;
 import org.springframework.util.backoff.FixedBackOff;
 import ru.t1.java.demo.kafka.MessageDeserializer;
-import ru.t1.java.demo.model.dto.*;
+import ru.t1.java.demo.model.dto.AccountDto;
+import ru.t1.java.demo.model.dto.ClientDto;
+import ru.t1.java.demo.model.dto.TransactionDto;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -45,7 +47,7 @@ public class KafkaConfig {
     @Value("${t1.kafka.max.poll.interval.ms:3000}")
     private String maxPollIntervalsMs;
 
-    public <T> ConsumerFactory<String, T> consumerListenerFactory(String groupId, Class<T> clazz) {
+    private <T> ConsumerFactory<String, T> consumerListenerFactory(String groupId, Class<T> clazz) {
         Map<String, Object> props = new HashMap<>();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, servers);
         props.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
@@ -69,13 +71,6 @@ public class KafkaConfig {
         return factory;
     }
 
-    <T> ConcurrentKafkaListenerContainerFactory<String, T> kafkaListenerContainerFactory(
-            @Qualifier("consumerListenerFactory") ConsumerFactory<String, T> consumerFactory) {
-        ConcurrentKafkaListenerContainerFactory<String, T> factory = new ConcurrentKafkaListenerContainerFactory<>();
-        factoryBuilder(consumerFactory, factory);
-        return factory;
-    }
-
     private <T> void factoryBuilder(ConsumerFactory<String, T> consumerFactory, ConcurrentKafkaListenerContainerFactory<String, T> factory) {
         factory.setConsumerFactory(consumerFactory);
         factory.setBatchListener(true);
@@ -93,6 +88,13 @@ public class KafkaConfig {
             log.error(" RetryListeners message = {}, offset = {} deliveryAttempt = {}", ex.getMessage(), record.offset(), deliveryAttempt);
         });
         return handler;
+    }
+
+    <T> ConcurrentKafkaListenerContainerFactory<String, T> kafkaListenerContainerFactory(
+            @Qualifier("consumerListenerFactory") ConsumerFactory<String, T> consumerFactory) {
+        ConcurrentKafkaListenerContainerFactory<String, T> factory = new ConcurrentKafkaListenerContainerFactory<>();
+        factoryBuilder(consumerFactory, factory);
+        return factory;
     }
 
     @Bean
@@ -134,37 +136,8 @@ public class KafkaConfig {
         return new DefaultKafkaProducerFactory<>(props);
     }
 
+    @Bean
     public <T> KafkaTemplate<String, T> kafkaTemplate() {
         return new KafkaTemplate<>(producerFactory());
-    }
-
-    @Bean
-    public KafkaTemplate<String, AccountDto> kafkaAccountTemplate() {
-        return kafkaTemplate();
-    }
-
-    @Bean
-    public KafkaTemplate<String, ClientDto> kafkaClientTemplate() {
-        return kafkaTemplate();
-    }
-
-    @Bean
-    public KafkaTemplate<String, TransactionDto> kafkaTransactionTemplate() {
-        return kafkaTemplate();
-    }
-
-    @Bean
-    public KafkaTemplate<String, MetricDto> kafkaMetricTemplate() {
-        return kafkaTemplate();
-    }
-
-    @Bean
-    public KafkaTemplate<String, ErrorDto> kafkaErrorTemplate() {
-        return kafkaTemplate();
-    }
-
-    @Bean
-    public KafkaTemplate<String, Long> kafkaLongTemplate() {
-        return kafkaTemplate();
     }
 }
