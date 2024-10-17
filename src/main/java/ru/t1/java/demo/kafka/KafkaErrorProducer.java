@@ -12,12 +12,22 @@ import ru.t1.java.demo.model.dto.ErrorDto;
 @RequiredArgsConstructor
 public class KafkaErrorProducer {
 
-    private final KafkaTemplate<String, ErrorDto> accountDtoTemplate;
+    private final KafkaTemplate<String, ErrorDto> errorDtoTemplate;
+    private final KafkaTemplate<String, Long> longTemplate;
 
     public void sendTo(String topic, ErrorDto errorDto) {
         try {
-            accountDtoTemplate.send(topic, errorDto).get();
-            accountDtoTemplate.flush();
+            errorDtoTemplate.send(topic, errorDto).get();
+            errorDtoTemplate.flush();
+        } catch (Exception ex) {
+            log.error(ex.getMessage(), ex);
+        }
+    }
+
+    public void sendTo(String topic, Long id) {
+        try {
+            longTemplate.send(topic, id).get();
+            longTemplate.flush();
         } catch (Exception ex) {
             log.error(ex.getMessage(), ex);
         }

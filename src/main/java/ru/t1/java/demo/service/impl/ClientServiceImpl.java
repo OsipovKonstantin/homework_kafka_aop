@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.t1.java.demo.aop.Metric;
 import ru.t1.java.demo.kafka.KafkaClientProducer;
 import ru.t1.java.demo.model.Client;
@@ -16,13 +17,15 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-@Service
 @Slf4j
+@Service
+@Transactional
 @RequiredArgsConstructor
 public class ClientServiceImpl implements ClientService {
 
     private final ClientRepository repository;
     private final KafkaClientProducer kafkaClientProducer;
+    private final ClientRepository clientRepository;
 
     @Metric
     @Override
@@ -35,6 +38,7 @@ public class ClientServiceImpl implements ClientService {
 
     @Metric
     @Override
+    @Transactional(readOnly = true)
     public List<ClientDto> parseJson() {
         ObjectMapper mapper = new ObjectMapper();
 
@@ -46,5 +50,10 @@ public class ClientServiceImpl implements ClientService {
         }
 
         return Arrays.asList(clients);
+    }
+
+    @Override
+    public Client registerClient(Client client) {
+        return clientRepository.save(client);
     }
 }

@@ -24,7 +24,7 @@ public class KafkaTransactionConsumer {
     private final TransactionMapper transactionMapper;
 
     @KafkaListener(id = "${t1.kafka.consumer.transaction-group-id}",
-            topics = "${t1.kafka.topic.transaction}",
+            topics = "${t1.kafka.topic.t1_demo_client_transactions}",
             containerFactory = "transactionListenerContainerFactory")
     public void listener(@Payload List<TransactionDto> messageList,
                          Acknowledgment ack,
@@ -37,6 +37,25 @@ public class KafkaTransactionConsumer {
                     .map(dto -> transactionMapper.toEntity(dto))
                     .toList();
             transactionService.addTransaction(transactions);
+        } finally {
+            ack.acknowledge();
+        }
+
+        log.debug("Transaction consumer: записи обработаны");
+    }
+
+
+    @KafkaListener(id = "${t1.kafka.consumer.transaction-error-group-id}",
+            topics = "${t1.kafka.topic.transaction_error}",
+            containerFactory = "transactionErrorListenerContainerFactory")
+    public void errorListener(@Payload List<String> messageList,
+                         Acknowledgment ack,
+                         @Header(KafkaHeaders.RECEIVED_TOPIC) String topic,
+                         @Header(KafkaHeaders.RECEIVED_KEY) String key) {
+        log.debug("Transaction consumer: Обработка новых сообщений");
+
+        try {
+            transactionService.cancelTransaction(messageList.stream().map(Long::parseLong).toList());
         } finally {
             ack.acknowledge();
         }

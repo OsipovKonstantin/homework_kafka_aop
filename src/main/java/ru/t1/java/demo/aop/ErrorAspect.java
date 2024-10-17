@@ -7,7 +7,9 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import ru.t1.java.demo.exception.TransactionError;
 import ru.t1.java.demo.kafka.KafkaErrorProducer;
+import ru.t1.java.demo.model.Transaction;
 import ru.t1.java.demo.model.dto.ErrorDto;
 
 import java.util.Arrays;
@@ -20,7 +22,10 @@ public class ErrorAspect {
     @Value("${t1.kafka.topic.error}")
     private String topic;
 
-    @Pointcut("within(ru.t1.java.demo..*)")
+    @Value("${t1.kafka.topic.transaction_error}")
+    private String transactionErrorTopic;
+
+    @Pointcut("@annotation(ru.t1.java.demo.aop.TransactionKafkaLog)")
     public void loggingMethod() {
     }
 

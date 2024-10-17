@@ -2,6 +2,7 @@ package ru.t1.java.demo.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,10 +19,10 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Builder
-public class AccountDto {
+public class AccountCreateDto {
+    @NotNull
     @JsonProperty("client_id")
     private Long clientId;
     private AccountType type;
-    private BigDecimal balance;
-    private Boolean isBlocked;
 }
+
