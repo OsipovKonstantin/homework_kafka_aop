@@ -2,15 +2,22 @@ spring:
   application:
     name: t1-java-demo
   datasource:
-    url: jdbc:postgresql://localhost:6543/t1_demo
     username: postgres
     password: "0000"
     driverClassName: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:6543/t1_demo
+    jdbcUrl: jdbc:postgresql://localhost:6543/t1_demo
   liquibase:
     enabled: true
     default-schema: public
     change-log: db/changelog/db.changelog-master.xml
-
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:6543/t1_demo
+    user: postgres
+    password: "0000"
+security:
+  token: tstrs4g434wyhser5htstrs4g434wyhser5htstrs4g434wyhser5htstrs4g434wyhser5htstrs4g434wyhser5h
+  expiration: 86400000
 
 logging:
   level:
@@ -26,6 +33,7 @@ t1:
       group-id: t1-demo
       account-group-id: t1-demo-account
       transaction-group-id: t1-demo-transaction
+      transaction-error-group-id: t1-demo-transaction-error
       max.poll.records: 10
     producer:
       enable: true
@@ -34,11 +42,16 @@ t1:
       client_id_registered: client_registered
       account: t1_demo_accounts
       account-registered: t1_demo_accounts_registered
-      transaction: t1_demo_transactions
+      t1_demo_client_transactions: t1_demo_client_transactions
       transaction-registered: t1_demo_transactions_registered
+      transaction_error: t1_demo_client_transaction_errors
       metric: t1_demo_metric_trace
       error: t1_demo_error_trace
     listener:
       poll-timeout: 1000
   aop:
     execution-time-threshold: 3
+  schedule:
+    transaction:
+      resend:
+        period: 10000

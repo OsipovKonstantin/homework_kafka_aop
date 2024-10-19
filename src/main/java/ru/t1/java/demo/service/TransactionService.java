@@ -9,4 +9,8 @@ public interface TransactionService {
     List<TransactionDto> parseJson();
 
     void addTransaction(List<Transaction> transactions);
+
+    void cancelTransaction(List<Long> transactionIds);
+
+    Transaction getTransaction(Long transactionId);
 }

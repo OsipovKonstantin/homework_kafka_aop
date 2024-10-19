@@ -1,6 +1,6 @@
 [
   {
-    "amount": 2.83,
+    "amount": 100,
     "client_id": 30,
     "account_id": 1
   },
@@ -251,6 +251,26 @@
   },
   {
     "amount": -200000,
+    "client_id": 57,
+    "account_id": 50
+  },
+  {
+    "amount": -200000,
+    "client_id": 57,
+    "account_id": 50
+  },
+  {
+    "amount": -200000,
+    "client_id": 57,
+    "account_id": 50
+  },
+  {
+  "amount": 10000,
+  "client_id": 57,
+  "account_id": 50
+},
+  {
+    "amount": 600000,
     "client_id": 57,
     "account_id": 50
   },

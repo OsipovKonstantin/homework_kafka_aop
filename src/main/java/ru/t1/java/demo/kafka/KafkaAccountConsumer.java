@@ -11,6 +11,7 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Component;
 import ru.t1.java.demo.mapper.AccountMapper;
 import ru.t1.java.demo.model.Account;
+import ru.t1.java.demo.model.dto.AccountCreateDto;
 import ru.t1.java.demo.model.dto.AccountDto;
 import ru.t1.java.demo.service.AccountService;
 
@@ -27,7 +28,7 @@ public class KafkaAccountConsumer {
     @KafkaListener(id = "${t1.kafka.consumer.account-group-id}",
             topics = "${t1.kafka.topic.account}",
             containerFactory = "accountListenerContainerFactory")
-    public void listener(@Payload List<AccountDto> messageList,
+    public void listener(@Payload List<AccountCreateDto> messageList,
                          Acknowledgment ack,
                          @Header(KafkaHeaders.RECEIVED_TOPIC) String topic,
                          @Header(KafkaHeaders.RECEIVED_KEY) String key) {

@@ -6,22 +6,20 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.t1.java.demo.util.AccountType;
 
 import java.math.BigDecimal;
 
-/**
- * DTO for {@link ru.t1.java.demo.model.Account}
- */
 @Data
-@AllArgsConstructor
-@NoArgsConstructor
-@JsonIgnoreProperties(ignoreUnknown = true)
 @Builder
-public class AccountDto {
+@NoArgsConstructor
+@AllArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class TransactionFullDto {
+    private Long id;
+    private BigDecimal amount;
     @JsonProperty("client_id")
     private Long clientId;
-    private AccountType type;
-    private BigDecimal balance;
-    private Boolean isBlocked;
+    @JsonProperty("account_id")
+    private Long accountId;
+    private TransactionType type;
 }
