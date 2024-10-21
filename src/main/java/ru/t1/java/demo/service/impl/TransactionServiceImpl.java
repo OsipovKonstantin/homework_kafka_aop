@@ -14,20 +14,19 @@ import ru.t1.java.demo.model.Account;
 import ru.t1.java.demo.model.Client;
 import ru.t1.java.demo.model.Transaction;
 import ru.t1.java.demo.model.dto.TransactionDto;
+import ru.t1.java.demo.model.dto.TransactionIsAllowedResponse;
 import ru.t1.java.demo.repository.AccountRepository;
 import ru.t1.java.demo.repository.ClientRepository;
 import ru.t1.java.demo.repository.TransactionRepository;
 import ru.t1.java.demo.service.AccountService;
 import ru.t1.java.demo.service.TransactionService;
 import ru.t1.java.demo.util.AccountType;
+import ru.t1.java.demo.web.GeneralWebClient;
 
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -39,6 +38,7 @@ public class TransactionServiceImpl implements TransactionService {
     private final AccountRepository accountRepository;
     private final KafkaTransactionProducer kafkaTransactionProducer;
     private final AccountService accountService;
+    private final GeneralWebClient generalWebClient;
 
     @Metric
     @Override
@@ -58,10 +58,14 @@ public class TransactionServiceImpl implements TransactionService {
 
     @Metric
     @Override
-    public void addTransaction(List<Transaction> transactions) {
+    public List<Transaction> addTransaction(List<Transaction> transactions) {
+
         for (Transaction transaction : transactions) {
             Long clientId = transaction.getClientId();
             Long accountId = transaction.getAccountId();
+            if(!isTransactionAllowed(clientId)) {
+                throw new ConflictException("Транзакция не разрешена");
+            }
             Client client = clientRepository.findById(clientId)
                     .orElseThrow(() -> new NotFoundException(String.format("Клиент с id %s не найден", clientId)));
             Account account = accountRepository.findById(accountId)
@@ -87,6 +91,7 @@ public class TransactionServiceImpl implements TransactionService {
                 kafkaTransactionProducer.send(savedTransaction.getId());
             }
         }
+        return transactions;
     }
 
     @Override
@@ -137,5 +142,14 @@ public class TransactionServiceImpl implements TransactionService {
         accountRepository.saveAll(accountsForRetry);
         transactionsForRetry.forEach(t -> t.setIsRetry(false));
         transactionRepository.saveAll(transactionsForRetry);
+    }
+
+    @Override
+    public Boolean isTransactionAllowed(Long clientId) {
+        Optional<TransactionIsAllowedResponse> isAllowed = generalWebClient.isAllowed(clientId);
+        if (isAllowed.isPresent() && isAllowed.get().getIsAllowed()) {
+                return true;
+                }
+        return false;
     }
 }

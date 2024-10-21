@@ -2,19 +2,27 @@ spring:
   application:
     name: t1-java-demo
   datasource:
-    username: postgres
-    password: "0000"
-    driverClassName: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:6543/t1_demo
-    jdbcUrl: jdbc:postgresql://localhost:6543/t1_demo
+    jdbcUrl: jdbc:h2:mem:test
+    username: admin
+    password: admin
+    driverClassName: org.h2.Driver
   liquibase:
-    enabled: true
+    enabled: false
     default-schema: public
     change-log: db/changelog/db.changelog-master.xml
-    driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:6543/t1_demo
-    user: postgres
-    password: "0000"
+    driver-class-name: org.h2.Driver
+    driverClassName: org.h2.Driver
+    url: jdbc:h2:mem:t1_demo
+    user: admin
+    password: admin
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+  h2:
+    console:
+      enabled: true
 security:
   token: tstrs4g434wyhser5htstrs4g434wyhser5htstrs4g434wyhser5htstrs4g434wyhser5htstrs4g434wyhser5h
   expiration: 86400000
@@ -55,3 +63,8 @@ t1:
     transaction:
       resend:
         period: 10000
+integration:
+  url: http://localhost:8088
+  resource: /bsc-wire-mock/api/client/check
+  retry-count: 3
+  retry-backoff: 1000

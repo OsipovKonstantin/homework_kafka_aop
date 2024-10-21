@@ -1,0 +1,51 @@
+{
+  "id" : "43b980b5-eb86-4f2b-815a-ebb675037710",
+  "name" : "/api/transaction/isAllowed",
+  "request" : {
+    "url" : "/api/transaction/isAllowed",
+    "method" : "ANY"
+  },
+  "response" : {
+    "status" : 200,
+    "body" : "{\n\"isAllowed\": true\n}",
+    "headers" : {
+      "Content-Type" : "application/json"
+    }
+  },
+  "uuid" : "43b980b5-eb86-4f2b-815a-ebb675037710",
+  "persistent" : true,
+  "requiredScenarioState" : "Started",
+  "metadata" : {
+    "proxyBaseUrl" : "http://",
+    "proxyUrlPrefixToRemove" : "",
+    "proxyEnable" : false,
+    "proxyResponseHeaders" : {
+      "Content-Type" : "application/json"
+    },
+    "responseHeaders" : {
+      "Content-Type" : "application/json"
+    },
+    "csvTableHeader" : "",
+    "csvMQTableHeader" : "",
+    "isCSV" : false,
+    "isMqCSV" : false,
+    "isAsyncCsv" : [ false ]
+  },
+  "insertionIndex" : 2,
+  "postServeActions" : [ {
+    "name" : "asyncAction",
+    "parameters" : {
+      "mqAsyncAction" : false,
+      "isAsyncAction" : false,
+      "httpResponse" : [ {
+        "asyncEnabled" : false,
+        "responseDefinition" : {
+          "headers" : {
+            "Content-Type" : [ "application/json" ]
+          }
+        }
+      } ],
+      "mqResponse" : { }
+    }
+  } ]
+}
