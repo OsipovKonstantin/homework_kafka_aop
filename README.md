@@ -44,6 +44,10 @@ git clone https://github.com/OsipovKonstantin/homework_kafka_aop.git
    ```
 docker-compose up
    ```
-В Intellij IDEA запустите приложение. Приложение готово к использованию! Оценить работу эндпоинтов можете через Insomnia или Postman. 
+В Intellij IDEA запустите приложение. Приложение готово к использованию! 
+
+Оценить работу эндпоинтов можете через Insomnia или Postman. 
+
 Сохранение данных в БД - через Intellij Idea, pgAdmin или dBeaver.
+
 Работу продьюсеров и консьюмеров Kafka - через ПО Offset Explorer и отчасти через набор плагинов Big Data Tools + Big Data Tools Core + Kafka.
