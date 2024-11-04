@@ -12,24 +12,19 @@
 [![MapStruct](https://img.shields.io/badge/MapStruct-d23120?style=for-the-badge&logo=&logoColor=white)](https://mapstruct.org/)
 
 ## Архитектура
-Приложение монолитное. Брокер сообщений Kafka и СУБД PostgreSQL запускаются в отдельных docker-контейнерах
+Монолит. Kafka и PostgreSQL запускаются в отдельных docker-контейнерах
 
 ## Функциональность
-POST http://localhost:8080/api/auth/signup - регистрация пользователя
-POST http://localhost:8080/api/auth/signin - аутентификация пользователя и получения access-токена
-POST http://localhost:8080/client/register - регистрация клиента
-GET http://localhost:8080/parse - создание клиентов из файла MOCK_DATA.json. Клиенты записываются продьюсером KafkaClientProducer в топик client_registration. 
-Оттуда читаются консьюмером KafkaClientConsumer и записываются в БД в таблицу client. Id клиентов отправляются продьюсером KafkaClientProducer в топик client_registered
-GET http://localhost:8080/loadAccounts - создание аккаунтов клиентов из файла MOCK_ACCOUNT_DATA.json. Аккаунты записываются в топик t1_demo_accounts продьюсером KafkaAccountProducer.
-Консьюмер KafkaAccountConsumer читает их из топика, записывает аккаунты в БД в таблицу account. 
-Id аккаунтов отправляются в топик t1_demo_accounts_registered с помощью продьюсера KafkaAccountProducer 
-POST http://localhost:8080/account/register - создание аккаунта
-GET http://localhost:8080/account/{accountId} - получение аккаунта по id
-PUT http://localhost:8080/account/block-debit/{accountId} - блокировка дебитового аккаунта (счёта) по его id
-GET http://localhost:8080/loadTransactions - создание транзакций из файла MOCK_TRANSACTION_DATA.json. 
-Транзакции пишутся в топик t1_demo_client_transactions продьюсером KafkaTransactionProducer. 
-Оттуда читаются консьюмером KafkaTransactionConsumer и транзакции и изменение баланса аккаунтов записываются в БД в таблицы transaction и account соответственно.
-Id успешно проведенных транзакций записываются в топик t1_demo_transactions_registered, а неуспешных транзакций в топик t1_demo_client_transaction_error продьюсером KafkaTransactionProducer. 
-Из топика t1_demo_client_transaction_error консьюмер KafkaTransactionConsumer считывает id неуспешных транзакций и удаляет их из БД и откатывает обратно изменение баланса аккаунта.
-POST http://localhost:8080/transaction/add - добавление транзакции
-GET http://localhost:8080/transaction/{transactionId} - получение транзакции по id
+| **Эндпоинт** | **Описание** |
+| - | - |
+|POST http://localhost:8080/api/auth/signup|регистрация пользователя|
+|POST http://localhost:8080/api/auth/signin|аутентификация пользователя и получения access-токена|
+|POST http://localhost:8080/client/register|регистрация клиента|
+|GET http://localhost:8080/parse|создание клиентов из файла MOCK_DATA.json. Клиенты записываются продьюсером KafkaClientProducer в топик client_registration. Оттуда читаются консьюмером KafkaClientConsumer и записываются в БД в таблицу client. Id клиентов отправляются продьюсером KafkaClientProducer в топик client_registered|
+|GET http://localhost:8080/loadAccounts|создание аккаунтов клиентов из файла MOCK_ACCOUNT_DATA.json. Аккаунты записываются в топик t1_demo_accounts продьюсером KafkaAccountProducer. Консьюмер KafkaAccountConsumer читает их из топика, записывает аккаунты в БД в таблицу account. Id аккаунтов отправляются в топик t1_demo_accounts_registered с помощью продьюсера KafkaAccountProducer|
+|POST http://localhost:8080/account/register|создание аккаунта|
+|GET http://localhost:8080/account/{accountId}|получение аккаунта по id|
+|PUT http://localhost:8080/account/block-debit/{accountId}|блокировка дебитового аккаунта (счёта) по его id|
+|GET http://localhost:8080/loadTransactions|создание транзакций из файла MOCK_TRANSACTION_DATA.json. Транзакции пишутся в топик t1_demo_client_transactions продьюсером KafkaTransactionProducer. Оттуда читаются консьюмером KafkaTransactionConsumer и транзакции и изменение баланса аккаунтов записываются в БД в таблицы transaction и account соответственно. Id успешно проведенных транзакций записываются в топик t1_demo_transactions_registered, а неуспешных транзакций в топик t1_demo_client_transaction_error продьюсером KafkaTransactionProducer. Из топика t1_demo_client_transaction_error консьюмер KafkaTransactionConsumer считывает id неуспешных транзакций и удаляет их из БД и откатывает обратно изменение баланса аккаунта.|
+|POST http://localhost:8080/transaction/add|добавление транзакции|
+|GET http://localhost:8080/transaction/{transactionId}|получение транзакции по id|
