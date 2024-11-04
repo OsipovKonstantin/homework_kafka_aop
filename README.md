@@ -37,7 +37,7 @@
 Для запуска установите и откройте программу [Docker Desktop](https://www.docker.com/products/docker-desktop/). Затем в командной строке cmd выполните следующие команды
 
    ```
-git clone https://github.com/OsipovKonstantin/java-explore-with-me.git
+git clone https://github.com/OsipovKonstantin/homework_kafka_aop.git
    ```
 в командной строке перейдите в корень проекта. Далее поднимите докер-контейнеры Kafka и PostgreSQL с помощью команды
    ```
