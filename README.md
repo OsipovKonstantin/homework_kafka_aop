@@ -29,6 +29,7 @@
 |POST http://localhost:8080/transaction/add|добавление транзакции|
 |GET http://localhost:8080/transaction/{transactionId}|получение транзакции по id|
 
+Для методов, помеченных в коде аннотацией @Metric, срабатывает аспект MetricAspect. Он оценивает длительность работы метода, помеченного аннотацией @Metric и в случае превышения порогового значения информация о методе (его название, параметры и длительность выполнения) записываются в топик t1_demo_metric_trace продьюсером KafkaMetricProducer
 
 ## Диаграммы базы данных
 ![схема БД](https://github.com/user-attachments/assets/be97952e-5075-4852-bb83-a7abe133f654)
