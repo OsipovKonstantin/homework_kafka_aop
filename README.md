@@ -28,3 +28,21 @@
 |GET http://localhost:8080/loadTransactions|создание транзакций из файла MOCK_TRANSACTION_DATA.json. Транзакции пишутся в топик t1_demo_client_transactions продьюсером KafkaTransactionProducer. Оттуда читаются консьюмером KafkaTransactionConsumer и транзакции и изменение баланса аккаунтов записываются в БД в таблицы transaction и account соответственно. Id успешно проведенных транзакций записываются в топик t1_demo_transactions_registered, а неуспешных транзакций в топик t1_demo_client_transaction_error продьюсером KafkaTransactionProducer. Из топика t1_demo_client_transaction_error консьюмер KafkaTransactionConsumer считывает id неуспешных транзакций и удаляет их из БД и откатывает обратно изменение баланса аккаунта.|
 |POST http://localhost:8080/transaction/add|добавление транзакции|
 |GET http://localhost:8080/transaction/{transactionId}|получение транзакции по id|
+
+
+## Диаграммы базы данных
+![схема БД](https://github.com/user-attachments/assets/be97952e-5075-4852-bb83-a7abe133f654)
+
+## Как запустить и использовать
+Для запуска установите и откройте программу [Docker Desktop](https://www.docker.com/products/docker-desktop/). Затем в командной строке cmd выполните следующие команды
+
+   ```
+git clone https://github.com/OsipovKonstantin/java-explore-with-me.git
+   ```
+в командной строке перейдите в корень проекта. Далее поднимите докер-контейнеры Kafka и PostgreSQL с помощью команды
+   ```
+docker-compose up
+   ```
+В Intellij IDEA запустите приложение. Приложение готово к использованию! Оценить работу эндпоинтов можете через Insomnia или Postman. 
+Сохранение данных в БД - через Intellij Idea, pgAdmin или dBeaver.
+Работу продьюсеров и консьюмеров Kafka - через ПО Offset Explorer и отчасти через набор плагинов Big Data Tools + Big Data Tools Core + Kafka.
