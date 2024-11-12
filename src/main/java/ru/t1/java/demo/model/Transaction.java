@@ -30,4 +30,9 @@ public class Transaction extends AbstractPersistable<Long> {
     private Boolean isRetry;
 
     private TransactionType type;
+
+    @Override
+    public void setId(Long id) {
+        super.setId(id);
+    }
 }

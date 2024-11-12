@@ -9,7 +9,7 @@ import ru.t1.java.demo.model.dto.TransactionType;
 import java.math.BigDecimal;
 
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE,
-        componentModel = MappingConstants.ComponentModel.SPRING, uses = {AccountMapper.class})
+        componentModel = MappingConstants.ComponentModel.SPRING, uses = {TransactionMapper.class})
 public interface TransactionMapper {
     @Mapping(target = "isRetry", constant = "false")
     @Mapping(target = "type", expression = "java(determineTransactionType(transactionDto.getAmount()))")

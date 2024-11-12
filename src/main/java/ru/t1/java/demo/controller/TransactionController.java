@@ -42,7 +42,7 @@ public class TransactionController {
         kafkaTransactionProducer.sendTo(topic, transactionDto);
     }
 
-    @GetMapping("transaction/{transactionId}")
+    @GetMapping("/transaction/{transactionId}")
     public TransactionFullDto getTransaction(@PathVariable Long transactionId) {
         return transactionMapper.toFullDto(transactionService.getTransaction(transactionId));
     }

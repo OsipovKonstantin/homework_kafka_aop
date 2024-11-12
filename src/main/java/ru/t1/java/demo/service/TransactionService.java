@@ -8,9 +8,11 @@ import java.util.List;
 public interface TransactionService {
     List<TransactionDto> parseJson();
 
-    void addTransaction(List<Transaction> transactions);
+    List<Transaction> addTransaction(List<Transaction> transactions);
 
     void cancelTransaction(List<Long> transactionIds);
 
     Transaction getTransaction(Long transactionId);
+
+    Boolean isTransactionAllowed(Long clientId);
 }

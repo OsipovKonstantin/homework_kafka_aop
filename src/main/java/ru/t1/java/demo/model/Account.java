@@ -29,4 +29,9 @@ public class Account extends AbstractPersistable<Long> {
 
     @Column(name = "is_blocked")
     private Boolean isBlocked;
+
+    @Override
+    public void setId(Long id) {
+        super.setId(id);
+    }
 }

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.*;
 import org.springframework.kafka.listener.CommonErrorHandler;
@@ -18,6 +19,7 @@ import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.support.serializer.JsonSerializer;
 import org.springframework.util.backoff.FixedBackOff;
+import org.springframework.web.client.RestTemplate;
 import ru.t1.java.demo.kafka.MessageDeserializer;
 import ru.t1.java.demo.model.dto.AccountCreateDto;
 import ru.t1.java.demo.model.dto.ClientDto;
@@ -26,6 +28,7 @@ import ru.t1.java.demo.model.dto.TransactionDto;
 import java.util.HashMap;
 import java.util.Map;
 
+@EnableKafka
 @Slf4j
 @Configuration
 public class KafkaConfig {

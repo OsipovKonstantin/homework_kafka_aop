@@ -24,4 +24,8 @@ public class Client extends AbstractPersistable<Long> {
     @Column(name = "middle_name")
     private String middleName;
 
+    @Override
+    public void setId(Long id) {
+        super.setId(id);
+    }
 }
