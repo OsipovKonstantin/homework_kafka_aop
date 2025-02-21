@@ -1,4 +1,4 @@
-# Kafka и AOP - мини-проект по реализации совместной работы брокера сообщений Kafka и аспектно-ориентированного программирования
+# Сервис управления счетами клиентов и сбором метрик с помощью AOP и Kafka
 [![Java](https://img.shields.io/badge/-Java-F29111?style=for-the-badge&logo=java&logoColor=e38873)](https://www.oracle.com/java/)
 [![Spring Boot](https://img.shields.io/badge/-Spring%20Boot-6AAD3D?style=for-the-badge&logo=spring-boot&logoColor=90fd87)](https://spring.io/projects/spring-boot)
 [![Spring Security](https://img.shields.io/badge/-Spring%20Security-6AAD3D?style=for-the-badge&logo=spring-security&logoColor=90fd87)](https://spring.io/projects/spring-security)
